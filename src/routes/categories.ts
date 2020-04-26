@@ -1,14 +1,14 @@
-const express = require("express");
-const router = express.Router();
-const { callQuery } = require("../models/db");
-const { stCodes } = require("database-poems");
+import express from "express"
+const categoriesRouter = express.Router();
+import { callQuery } from "../models/db"
+import { stCodes } from "database-poems"
 
 /* GET users listing. */
-router.get("/", (req, res, next) => {
+categoriesRouter.get("/", (req, res, next) => {
   callQuery(res, "SELECT * FROM keimena_cat ORDER BY id ASC")
 });
 
-router.get("/:id", async (req, res, next) => {
+categoriesRouter.get("/:id", async (req, res, next) => {
   let id = req.params.id;
   if (!isNaN(parseInt(id))) {
     callQuery(res, `SELECT * FROM keimena_cat WHERE id = ${parseInt(id)}`)
@@ -19,4 +19,4 @@ router.get("/:id", async (req, res, next) => {
   }
   
 });
-module.exports = router;
+export default  categoriesRouter;

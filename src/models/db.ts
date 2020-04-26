@@ -1,8 +1,10 @@
-require("dotenv").config();
-const { apiResponse } = require("./utils");
-const { stCodes } = require("database-poems");
-const mariadb = require("mariadb");
+import dotenv from "dotenv"
 
+import { createApiResponse, ApiResponse } from "./utils"
+import { stCodes } from "database-poems"
+import mariadb from "mariadb"
+
+dotenv.config();
 const pool = mariadb.createPool({
   connectionLimit: 10,
   host: process.env.DB_HOST || "db22.papaki.gr",
@@ -12,20 +14,14 @@ const pool = mariadb.createPool({
   database: process.env.DB_NAME || "",
   connectTimeout: 1000,
   acquireTimeout: 1000,
-  insecureAuth: true,
   dateStrings: true
 });
 
-const getStatistics = () => {
+export const getStatistics = () => {
   return new Promise(async (resolve, reject) => {
-    // let con = await pool.getConnection()
-    // .catch(er => {
-    //   let response = apiResponse(this.stCodes.fail, er, 503);
-    //   resolve(response);
-    // });
-    let failResponse;
+    let failResponse:ApiResponse;
     let con = await getDBConnection().catch(er => {
-      failResponse = apiResponse(stCodes.fail, er.message, 500);
+      failResponse = createApiResponse(stCodes.fail, er.message, 500);
       return reject(failResponse);
     });
     if (con) {
@@ -40,49 +36,48 @@ const getStatistics = () => {
         GROUP BY 
             category`
         )
-        .catch(er => {
-          let response = apiResponse(stCodes.error, er, 406);
+        .catch((er: any) => {
+          let response = createApiResponse(stCodes.error, er, 406);
           reject(response);
         });
       let categories = [];
 
       for (let row of rows) {
-        let category = {};
+        let category:{id?:any,cc?:any,description?:any} = {}
         category.id = row.id;
         category.cc = row.cc;
         category.description = row.description;
         categories.push(category);
       }
-      resolve(apiResponse(stCodes.success, categories));
+      resolve(createApiResponse(stCodes.success, categories));
       con.end();
     } else {
-      reject(failResponse);
+      reject({})//failResponse);
     }
   });
 };
 
 const getDBConnection = () => {
-  return new Promise((resolve, reject) => {
-    let con = pool
-      .getConnection()
-      .then(con => resolve(con))
-      .catch(er => reject(er));
+  return new Promise((resolve: (con: mariadb.PoolConnection) => void, reject: (err: mariadb.SqlError) => void) => {
+    pool.getConnection()
+      .then((con) => resolve(con))
+      .catch((err) => reject(err));
   });
 };
 
-const execQuery = query => {
+const execQuery = (query: string):Promise<ApiResponse> => {
   return new Promise(async (resolve, reject) => {
-    let con = await getDBConnection().catch(er => {
-      failResponse = apiResponse(stCodes.fail, er.message, 500);
+    const con = await getDBConnection().catch(er => {
+      const failResponse = createApiResponse(stCodes.fail, er.message, 500);
       return reject(failResponse);
     });
     if (con) {
       let rows = await con.query(query).catch(er => {
-        let response = apiResponse(stCodes.error, er, 406);
+        let response = createApiResponse(stCodes.error, er, 406);
         resolve(response);
       });
       if (rows) {
-        const resp = apiResponse(stCodes.success, rows);
+        const resp = createApiResponse(stCodes.success, rows);
         resolve(resp);
       }
       con.end();
@@ -90,19 +85,13 @@ const execQuery = query => {
   });
 };
 
-const callQuery = (res, query) => {
+export const callQuery = (res: any, query: string) => {
   execQuery(query)
     .then(rows => res.status(rows.code).json(rows))
     .catch(er => {
-      let rows = apiResponse(stCodes.error, [], 406);
+      let rows:ApiResponse = createApiResponse(stCodes.error, [], 406);
       rows.error = er.data;
       res.status(rows.code).json(rows);
     });
 };
 
-module.exports = {
-  apiResponse,
-  callQuery,
-  execQuery,
-  getStatistics
-};

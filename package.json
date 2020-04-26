@@ -3,23 +3,32 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./src/www"
+    "build": "tsc",
+    "start": "nodemon ./dist/www.js"
   },
   "dependencies": {
     "browserify-middleware": "^8.1.1",
-    "cookie-parser": "~1.4.4",
+    "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
-    "database-poems": "^1.0.11",
+    "database-poems": "^1.0.18",
     "debug": "~2.6.9",
     "express": "~4.16.1",
     "express-handlebars": "^3.1.0",
-    "express-session": "^1.17.0",
+    "express-session": "^1.17.1",
     "http-errors": "~1.6.3",
-    "mariadb": "^2.1.2",
+    "mariadb": "^2.3.1",
     "morgan": "~1.9.1",
     "nodemon": "^1.19.4"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.2",
+    "@types/cors": "^2.8.6",
+    "@types/debug": "^4.1.5",
+    "@types/express": "^4.17.6",
+    "@types/express-handlebars": "^3.1.0",
+    "@types/express-session": "^1.17.0",
+    "@types/http-errors": "^1.6.3",
+    "@types/morgan": "^1.9.0",
     "dotenv": "^8.2.0",
     "typescript": "^3.8.3"
   }

@@ -1,19 +1,19 @@
-const createError = require("http-errors");
-const express = require("express");
-const exphbs = require("express-handlebars");
-const browserify = require("browserify-middleware");
-const path = require("path");
-const cookieParser = require("cookie-parser");
-const logger = require("morgan");
-const cors = require("cors");
-const session = require("express-session");
+import createError from "http-errors"
+import express from "express"
+import exphbs from "express-handlebars"
+import browserify from "browserify-middleware"
+import path from "path"
+import cookieParser from "cookie-parser"
+import logger from "morgan"
+import cors from "cors"
+import session from "express-session"
 
-const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
-const statisticsRouter = require("./routes/statistics")
-const poemsRouter = require("./routes/poems")
-const queryRouter = require("./routes/query")
-const categoriesRouter = require("./routes/categories")
+import indexRouter from "./routes/index"
+import usersRouter from "./routes/users"
+import statisticsRouter from "./routes/statistics"
+import poemsRouter from "./routes/poems"
+import queryRouter from "./routes/query"
+import categoriesRouter from "./routes/categories"
 
 const app = express();
 
@@ -64,7 +64,7 @@ app
   });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function(err:any, req:any, res:any) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
@@ -74,4 +74,4 @@ app.use(function(err, req, res, next) {
   res.render("error");
 });
 
-module.exports = app;
+export default app;

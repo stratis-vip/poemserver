@@ -1,15 +1,16 @@
-const express = require("express");
-const router = express.Router();
-const { callQuery } = require("../models/db");
-const { Respond, stCodes } = require("database-poems");
+import  express from "express"
+const  poemsRouter = express.Router()
+import  { callQuery } from "../models/db"
+import  { stCodes } from "database-poems"
+import { ApiResponse } from "../models/utils";
 
-router.get("/", async (req, res, next) => {
+poemsRouter.get("/", async (req, res, next) => {
   callQuery(res, `SELECT * FROM keimena`);
 });
 
-router.get("/:id", async (req, res, next) => {
+poemsRouter.get("/:id", async (req, res, next) => {
   const id = req.params.id;
-  let respond = new Respond();
+  let respond:ApiResponse = {}
 
   if (isNaN(parseInt(id))) {
     respond.status = stCodes.error;
@@ -20,5 +21,4 @@ router.get("/:id", async (req, res, next) => {
     callQuery(res, `SELECT * FROM keimena WHERE id = ${id}` )
   }
 });
-
-module.exports = router;
+export default poemsRouter;
