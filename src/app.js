@@ -31,7 +31,7 @@ app
   .set("view engine", "hbs")
 
   .use(cors())
-  .get("/javascripts/bundle.js", browserify("./client/script.js"))
+  .get("/javascripts/bundle.js", browserify("./src/client/script.js"))
   .set("views", path.join(__dirname, "views"))
   // .set("view engine", "jade")
 
